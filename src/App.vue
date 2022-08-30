@@ -45,8 +45,8 @@
       <button 
         v-for="(cell,index) in field_array"
         :key="index"
-        :style="{'background-color': cell.color}"
-        @click="bombCheck(cell); timerStart()">{{ cell.count }}</button>
+        :style="{'background': '-webkit-linear-gradient(top, ' + cell.color + ', #7b7c7b)'}"
+        @click="bombCheck(cell); timerStart()"><p v-if="cell.active">{{ cell.count }}</p></button>
     </div>
   </body>
 </template>
@@ -98,7 +98,7 @@ export default {
         return {
           'top': res
         }
-      }
+      },
     },
     created() {
       this.fillField();//запуск создания поля после отрисовки страницы
@@ -125,14 +125,14 @@ export default {
             id: i,
             count: null,
             bomb: false,
-            color: '#A8DD90'
+            color: '#A8DD90',
+            active: false
           }
           this.field_array[i] = standart_cell;
         }
         for(let l = 0; l < this.bombs_count[this.selected_mode]; l++) {
           if(this.field_array[this.getValueByIndex(l)-1]!==undefined) {
             this.field_array[this.getValueByIndex(l)-1].bomb = true;
-            this.field_array[this.getValueByIndex(l)-1].color = 'black';
           }
         }
         for(let k=0; k<this.cells_count; k++) {
@@ -140,9 +140,52 @@ export default {
         }
       },
       bombCheck (cell) {
-        if(this.field_array[cell.id].bomb === true) {
-          this.field_array[cell.id].color = '#d3d0d0bd';
+        if(cell.active === false) {
+          this.field_array[cell.id].color = '#7b7c7b'
+          this.field_array[cell.id].active = true;
         }
+        if(cell.bomb === true) {
+          this.fillField();
+        }
+       /* const cells = this.field_array;
+        const id_cell = cell.id;
+        const width = this.width[this.selected_mode]
+      
+        /*if(cell.bomb === false && cell.count === null) {
+          if(cells[id_cell-1] !== undefined && (id_cell)%width !== 0) {
+            this.field_array[cell.id-1].color = '#7b7c7b'
+          }
+          if( cells[id_cell+1] !== undefined && (id_cell+1)%width !== 0) {
+            this.field_array[cell.id+1].color = '#7b7c7b'
+          }
+
+          if( cells[id_cell-width-1] !== undefined && (id_cell)%width !== 0) {
+            this.field_array[cell.id-width-1].color = '#7b7c7b'
+          }
+          if( cells[id_cell-width] !== undefined && (id_cell+1)%width !== 0) {
+            this.field_array[cell.id-width].color = '#7b7c7b'
+          }
+          if( cells[id_cell-width+1] !== undefined && (id_cell+1)%width !== 0) {
+            this.field_array[cell.id-width+1].color = '#7b7c7b'
+          }
+
+          if( cells[id_cell+width-1] !== undefined && (id_cell)%width !== 0) {
+            this.field_array[cell.id+width-1].color = '#7b7c7b'
+          }
+          if( cells[id_cell+width] !== undefined && (id_cell+1)%width !== 0) {
+            this.field_array[cell.id+width].color = '#7b7c7b'
+          }
+          if( cells[id_cell+width+1] !== undefined && (id_cell+1)%width !== 0) {
+            this.field_array[cell.id+width+1].color = '#7b7c7b'
+          }
+        }*/
+      },
+      countVisible (cell) {
+        let res = null;
+        if (cell.active === false) {
+          res = cell.count;
+        } 
+        return res;
       },
       timerStart() {
         if(!this.isRunning) {
@@ -175,68 +218,66 @@ export default {
           return res
       },
       getDistanceToBomb(id_cell) {
-        if(this.field_array[id_cell-1]!==undefined&&id_cell%this.width[this.selected_mode]!==0) {
-          if(this.field_array[id_cell-1].bomb===true&&this.field_array[id_cell].bomb!==true){
-            if(this.field_array[id_cell].count===null) {
-              this.field_array[id_cell].count=0;
-              this.field_array[id_cell].count++;
+        const cells = this.field_array;
+        const width = this.width[this.selected_mode]
+        if(cells[id_cell-1] !== undefined && (id_cell)%width !== 0) {
+          if(cells[id_cell-1].bomb && !cells[id_cell].bomb) {
+            if( cells[id_cell].count === null) {
+              this.field_array[id_cell].count = 0;
             }
+            this.field_array[id_cell].count++;
           }
         }
-        if(this.field_array[id_cell+1]!==undefined&&id_cell%this.width[this.selected_mode]!==0) {
-          if(this.field_array[id_cell+1].bomb===true&&this.field_array[id_cell].bomb!==true){
-            if(this.field_array[id_cell].count===null) {
-              this.field_array[id_cell].count=0;
+        if( cells[id_cell+1] !== undefined && (id_cell+1)%width !== 0) {
+          if(cells[id_cell+1].bomb && !cells[id_cell].bomb) {
+            if( cells[id_cell].count === null) {
+              this.field_array[id_cell].count = 0;
             }
             this.field_array[id_cell].count++;
           }
         }
 
-        if(this.field_array[id_cell-this.width[this.selected_mode]-1]!==undefined&&id_cell%this.width[this.selected_mode]!==0) {
-          if(this.field_array[id_cell-this.width[this.selected_mode]-1].bomb===true&&this.field_array[id_cell].bomb!==true){
-            if(this.field_array[id_cell].count===null) {
-              this.field_array[id_cell].count=0;
+        if( cells[id_cell-width-1] !== undefined && (id_cell)%width !== 0) {
+          if(cells[id_cell-width-1].bomb && !cells[id_cell].bomb) {
+            if( cells[id_cell].count === null) {
+              this.field_array[id_cell].count = 0;
             }
             this.field_array[id_cell].count++;
           }
-        }
-        if(this.field_array[id_cell-this.width[this.selected_mode]]!==undefined) {
-          if(this.field_array[id_cell-this.width[this.selected_mode]].bomb===true&&this.field_array[id_cell].bomb!==true){
-            if(this.field_array[id_cell].count===null) {
-              this.field_array[id_cell].count=0;
+        }if( cells[id_cell-width] !== undefined && (id_cell+1)%width !== 0) {
+          if(cells[id_cell-width].bomb && !cells[id_cell].bomb) {
+            if( cells[id_cell].count === null) {
+              this.field_array[id_cell].count = 0;
             }
             this.field_array[id_cell].count++;
           }
-        }
-        if(this.field_array[id_cell-this.width[this.selected_mode]+1]!==undefined) {
-          if(this.field_array[id_cell-this.width[this.selected_mode]+1].bomb===true&&this.field_array[id_cell].bomb!==true){
-            if(this.field_array[id_cell].count===null) {
-              this.field_array[id_cell].count=0;
+        }if( cells[id_cell-width+1] !== undefined && (id_cell+1)%width !== 0) {
+          if(cells[id_cell-width+1].bomb && !cells[id_cell].bomb) {
+            if( cells[id_cell].count === null) {
+              this.field_array[id_cell].count = 0;
             }
             this.field_array[id_cell].count++;
           }
         }
 
-        if(this.field_array[id_cell+this.width[this.selected_mode]-1]!==undefined&&id_cell%this.width[this.selected_mode]!==0) {
-          if(this.field_array[id_cell+this.width[this.selected_mode]-1].bomb===true&&this.field_array[id_cell].bomb!==true){
-            if(this.field_array[id_cell].count===null) {
-              this.field_array[id_cell].count=0;
+        if( cells[id_cell+width-1] !== undefined && (id_cell)%width !== 0) {
+          if(cells[id_cell+width-1].bomb && !cells[id_cell].bomb) {
+            if( cells[id_cell].count === null) {
+              this.field_array[id_cell].count = 0;
             }
             this.field_array[id_cell].count++;
           }
-        }
-        if(this.field_array[id_cell+this.width[this.selected_mode]]!==undefined) {
-          if(this.field_array[id_cell+this.width[this.selected_mode]].bomb===true&&this.field_array[id_cell].bomb!==true){
-            if(this.field_array[id_cell].count===null) {
-              this.field_array[id_cell].count=0;
+        }if( cells[id_cell+width] !== undefined && (id_cell+1)%width !== 0) {
+          if(cells[id_cell+width].bomb && !cells[id_cell].bomb) {
+            if( cells[id_cell].count === null) {
+              this.field_array[id_cell].count = 0;
             }
             this.field_array[id_cell].count++;
           }
-        }
-        if(this.field_array[id_cell+this.width[this.selected_mode]+1]!==undefined) {
-          if(this.field_array[id_cell+this.width[this.selected_mode]+1].bomb===true&&this.field_array[id_cell].bomb!==true){
-            if(this.field_array[id_cell].count===null) {
-              this.field_array[id_cell].count=0;
+        }if( cells[id_cell+width+1] !== undefined && (id_cell+1)%width !== 0) {
+          if(cells[id_cell+width+1].bomb && !cells[id_cell].bomb) {
+            if( cells[id_cell].count === null) {
+              this.field_array[id_cell].count = 0;
             }
             this.field_array[id_cell].count++;
           }
@@ -259,7 +300,7 @@ export default {
         this.field_array = [];
         this.bombs_id = [];
         this.fillField();
-      }
+      },
   }
 }
 </script>
@@ -358,5 +399,21 @@ export default {
   .moved_to_left {
     justify-content: flex-start;
     margin-left: 20px;
+  }
+  @media (max-width: 1024px) {
+    .setting_menu {
+      a {
+        width: calc(100%/3.8);
+        font-size: calc(13px + 16 * (100% / 1440));
+      }
+    }
+    .settings {
+      width: 50%;
+    }
+    .timer {
+      span {
+        font-size: calc(15px + 16 * (100% / 1440));
+      }
+    }
   }
 </style>
