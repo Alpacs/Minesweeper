@@ -1,5 +1,8 @@
 # minesweeper
 
+## Можно не скачивать, просто перейти по ссылке: 
+https://alpacs.github.io/Minesweeper/
+
 ## Project setup
 ```
 npm install
