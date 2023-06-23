@@ -5,11 +5,13 @@ https://alpacs.github.io/Minesweeper/
 
 ## Project setup
 ```
-npm install
+npm i
+npm install serve (если запускать из dist)
 ```
 
-### Compiles and hot-reloads for development
+### Запуск проекта из dist и без него
 ```
+serve -s dist (если запускать из dist)
 npm run serve
 ```
 
